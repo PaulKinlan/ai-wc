@@ -1,0 +1,30 @@
+{
+  "name": "@ai-wc/summarize-component",
+  "version": "0.1.0",
+  "main": "dist/summarize-component.es.js",
+  "module": "dist/summarize-component.es.js",
+  "types": "dist/src/summarize-component.d.ts",
+  "scripts": {
+    "build": "wireit"
+  },
+  "wireit": {
+    "build": {
+      "command": "vite build",
+      "files": [
+        "src/**/*",
+        "vite.config.ts"
+      ]
+    },
+    "lint": {
+      "command": "eslint .",
+      "files": [
+        "src/**/*",
+        "vite.config.ts"
+      ]
+    }
+  },
+  "devDependencies": {
+    "vite": "^5.0.0",
+    "wireit": "^0.14.12"
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "name": "ai-wc",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "wireit",
+    "lint": "wireit",
+    "docs:dev": "vitepress dev docs --port 3000",
+    "examples:dev": "wireit"
+  },
+  "devDependencies": {
+    "eslint": "^8.0.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.0.0",
+    "vite": "^5.0.0",
+    "wireit": "^0.14.12"
+  },
+  "wireit": {
+    "examples:dev": {
+      "command": "vite examples --port 3001",
+      "dependencies": [
+        "build"
+      ],
+      "service": true
+    },
+    "build": {
+      "dependencies": [
+        {
+          "script": "./packages/ai-summarize-component/:build",
+          "cascade": false
+        },
+        {
+          "script": "./packages/ai-example-component/:build",
+          "cascade": false
+        }
+      ]
+    },
+    "lint": {
+      "dependencies": [
+        "./packages/ai-summarize-component/:lint",
+        "./packages/ai-example-component/:lint"
+      ]
+    }
+  },
+  "workspaces": [
+    "packages/*"
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "name": "@ai-wc/example-component",
+  "version": "0.1.0",
+  "main": "dist/ai-example-component.es.js",
+  "module": "dist/ai-example-component.es.js",
+  "types": "dist/src/ai-example-component.d.ts",
+  "scripts": {
+    "build": "wireit",
+    "lint": "wireit"
+  },
+  "wireit": {
+    "build": {
+      "command": "vite build",
+      "files": [
+        "src/**/*",
+        "vite.config.ts"
+      ]
+    },
+    "lint": {
+      "command": "eslint .",
+      "files": [
+        "src/**/*"
+      ]
+    }
+  },
+  "devDependencies": {
+    "vite": "^5.0.0",
+    "wireit": "^0.14.12"
+  }
+}
