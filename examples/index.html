@@ -17,6 +17,30 @@
     <ai-summarize-component watch="testText"></ai-summarize-component>
     <textarea id="testText" name="text" placeholder="Enter text to summarize" rows="4" cols="50"></textarea>
   </form>
+
+  <h2>Configurable AI Summarize Component</h2>
+  <form onsubmit="" id="configForm">
+    <select id="formatSelect" name="format">
+      <option value="plain-text">plain-text</option>
+      <option value="markdown">Markdown</option>
+    </select>
+    <select id="typeSelect" name="type">
+      <!--  ["key-points", "tldr", "teaser", "headline"]; -->
+      <option value="key-points">Key Points</option>
+      <option value="tldr">TL;DR</option>
+      <option value="teaser">Teaser</option>
+      <option value="headline">Headline</option>
+    </select>
+    <select id="lengthsSelect">
+      <!-- "short", "medium", "long"-->
+      <option value="short">Short</option>
+      <option value="medium">Medium</option>
+      <option value="long">Long</option>
+    </select>
+
+    <ai-summarize-component watch="testingText2" id="configurableSummarize"></ai-summarize-component>
+    <textarea id="testingText2" name="text" placeholder="Enter text to summarize" rows="4" cols="50"></textarea>
+  </form>
 </body>
 
 </html>

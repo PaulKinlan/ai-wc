@@ -1,3 +1,5 @@
+/// <reference lib="dom" />
+
 const validTypes = ["key-points", "tldr", "teaser", "headline"];
 const validFormats = ["markdown", "plain-text"];
 const validLengths = ["short", "medium", "long"];
@@ -6,19 +8,51 @@ class SummarizeComponent extends HTMLElement {
   static observedAttributes = ["watch", "type", "format", "length"];
   static formAssociated = true;
   #internals;
-  #watchedElement;
-  #sumarizer;
-  #type = "key-points"; // Default type
-  #format = "markdown"; // Default format
-  #length = "medium"; // Default length
-  #watchedElementFunction = async (event: HTMLInputElement) => {
-    const target = event.target as HTMLInputElement;
+  #watchedElement: HTMLInputElement | null;
+  #summarizer: Summarizer | null = null;
+  #type: SummarizerType = "key-points"; // Default type
+  #format: SummarizerFormat = "markdown"; // Default format
+  #length: SummarizerLength = "medium"; // Default length
+  #initializeSummarizer = async () => {
+    if (this.#summarizer) {
+      this.#summarizer.destroy();
+    }
+    this.#summarizer = await Summarizer.create({
+      type: this.#type,
+      format: this.#format,
+      length: this.#length,
+      monitor(m) {
+        m.addEventListener("downloadprogress", (e: ProgressEvent) => {
+          if (e.lengthComputable) {
+            console.log(`Downloaded ${(e.loaded / e.total) * 100}%`);
+          } else {
+            console.log(`Downloaded ${e.loaded} bytes`);
+          }
+        });
+      },
+    });
+  };
 
-    const summary = await this.#sumarizer.summarize(target.value);
-    const inputElement = this.shadowRoot.querySelector("#inp");
-    inputElement.value = summary;
+  #summarize = async (value) => {
+    if (!this.#summarizer) {
+      console.warn("Summarizer not initialized yet.");
+      return;
+    }
+    const summary = await this.#summarizer.summarize(value);
+    const inputElement = this.shadowRoot?.querySelector(
+      "#inp"
+    ) as HTMLInputElement | null;
+    if (inputElement) {
+      inputElement.value = summary;
+    }
 
     this.#internals.setFormValue(summary);
+  };
+  #watchedElementFunction = async (event: Event) => {
+    const target = event.target as HTMLInputElement;
+
+    await this.#summarize(target.value);
+
     console.log(`Watched element changed: ${target.value}`);
   };
   constructor() {
@@ -44,35 +78,24 @@ class SummarizeComponent extends HTMLElement {
         <button id="btn">S</button>
       `;
 
-      const inputElement = this.shadowRoot.querySelector("#inp");
+      const inputElement = this.shadowRoot.querySelector(
+        "#inp"
+      ) as HTMLInputElement | null;
       const buttonElement = this.shadowRoot.querySelector("#btn");
 
-      if ("Summarizer" in self == false) {
-        // The Summarizer API is supported.
+      if (!("Summarizer" in window) || !window.Summarizer) {
+        // The Summarizer API is not supported or not available.
+        console.warn("Summarizer API not found.");
         buttonElement?.setAttribute("disabled", "true");
+      } else {
+        // TODO:// We should move this because we might need to set it up if the parameters have changed.
+        this.#initializeSummarizer();
       }
 
-      Summarizer.create({
-        type: this.#type,
-        format: this.#format,
-        length: this.#length,
-        monitor(m) {
-          m.addEventListener("downloadprogress", (e) => {
-            console.log(`Downloaded ${e.loaded * 100}%`);
-          });
-        },
-      }).then((sumarizer) => {
-        this.#sumarizer = sumarizer;
-        console.log("Summarizer initialized");
-      });
-
-      buttonElement?.addEventListener("click", () => {
-        const inputValue = inputElement?.value || "";
-        if (inputValue) {
-          this.#internals.setFormValue(inputValue);
-          console.log("Summarizing:", inputValue);
-          // Here you would typically call an AI service to summarize the input.
-          // For demonstration, we'll just log it.
+      buttonElement?.addEventListener("click", async () => {
+        const watchedElement = this.#watchedElement;
+        if (watchedElement) {
+          await this.#summarize(watchedElement.value);
         }
       });
       inputElement?.addEventListener("change", (event) => {
@@ -82,8 +105,12 @@ class SummarizeComponent extends HTMLElement {
     }
   }
 
-  attributeChangedCallback(name, oldValue, newValue) {
-    if (name === "watch") {
+  attributeChangedCallback(
+    name: string,
+    oldValue: string | null,
+    newValue: string | null
+  ) {
+    if (name === "watch" && newValue) {
       console.log(`Attribute 'watch' changed from ${oldValue} to ${newValue}`);
       //
       const form = this.#internals.form;
@@ -105,6 +132,7 @@ class SummarizeComponent extends HTMLElement {
             "change",
             this.#watchedElementFunction
           );
+          this.#watchedElement = watchedElement as HTMLInputElement;
         }
       } else {
         console.warn(
@@ -112,31 +140,34 @@ class SummarizeComponent extends HTMLElement {
         );
       }
     } else if (name === "type") {
-      if (!validTypes.includes(newValue)) {
+      if (newValue === null || !validTypes.includes(newValue)) {
         console.warn(
           `Invalid type: ${newValue}. Valid types are: ${validTypes.join(", ")}`
         );
         return;
       }
       this.#type = newValue;
+      this.#initializeSummarizer();
       console.log(`Attribute 'type' changed to ${newValue}`);
     } else if (name === "format") {
-      if (!validFormats.includes(newValue)) {
+      if (newValue === null || !validFormats.includes(newValue)) {
         console.warn(
           `Invalid format: ${newValue}. Valid formats are: ${validFormats.join(", ")}`
         );
         return;
       }
       this.#format = newValue;
+      this.#initializeSummarizer();
       console.log(`Attribute 'format' changed to ${newValue}`);
     } else if (name === "length") {
-      if (!validLengths.includes(newValue)) {
+      if (newValue === null || !validLengths.includes(newValue)) {
         console.warn(
           `Invalid length: ${newValue}. Valid lengths are: ${validLengths.join(", ")}`
         );
         return;
       }
       this.#length = newValue;
+      this.#initializeSummarizer();
       console.log(`Attribute 'length' changed to ${newValue}`);
     }
 
@@ -154,10 +185,10 @@ class SummarizeComponent extends HTMLElement {
     }
   }
 
-  formStateRestoreCallback(state, reason) {
+  formStateRestoreCallback(state: string, reason: "autocomplete" | "restore") {
     const inputElement = this.shadowRoot?.querySelector(
       "#inp"
-    ) as HTMLInputElement;
+    ) as HTMLInputElement | null;
     if (inputElement) {
       inputElement.value = state;
       this.#internals.setFormValue(state);
