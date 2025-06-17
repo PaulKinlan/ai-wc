@@ -38,7 +38,20 @@ class SummarizeComponent extends HTMLElement {
       console.warn("Summarizer not initialized yet.");
       return;
     }
+    const buttonElement = this.shadowRoot?.querySelector(
+      "#btn"
+    ) as HTMLButtonElement | null;
+
+    if (buttonElement) {
+      buttonElement.classList.add("processing");
+    }
+
     const summary = await this.#summarizer.summarize(value);
+
+    if (buttonElement) {
+      buttonElement.classList.remove("processing");
+    }
+
     const inputElement = this.shadowRoot?.querySelector(
       "#inp"
     ) as HTMLInputElement | null;
@@ -72,10 +85,51 @@ class SummarizeComponent extends HTMLElement {
             color: black; /* Default text color */
           }
           button:disabled {
-            display: none;}
+            display: none;
+          }
+
+          button {
+            content: "HELLO";
+          }
+          
+          button#btn span.processing {
+            display: none;
+          }
+
+          button#btn span.waiting {
+            display: inline;
+          }
+
+          @keyframes rotate {
+            from {
+              transform: rotate(0deg);
+            }
+            to {
+              transform: rotate(360deg);
+            }
+          }
+
+          button#btn.processing span.processing {
+            display: inline;
+          }
+
+          button#btn.processing span.processing svg {
+            animation: rotate 1s linear infinite;
+          }
+
+           button#btn.processing span.waiting {
+            display: none;
+          }
         </style>
         <input type=text value="" id="inp"/>
-        <button id="btn">S</button>
+        <button id="btn">
+          <span class="processing">
+<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 31.5-155.5t86-127Q252-817 325-848.5T480-880q17 0 28.5 11.5T520-840q0 17-11.5 28.5T480-800q-133 0-226.5 93.5T160-480q0 133 93.5 226.5T480-160q133 0 226.5-93.5T800-480q0-17 11.5-28.5T840-520q17 0 28.5 11.5T880-480q0 82-31.5 155t-86 127.5q-54.5 54.5-127 86T480-80Z"/></svg></span>
+ <span class="waiting">
+
+<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="m176-120-56-56 301-302-181-45 198-123-17-234 179 151 216-88-87 217 151 178-234-16-124 198-45-181-301 301Zm24-520-80-80 80-80 80 80-80 80Zm355 197 48-79 93 7-60-71 35-86-86 35-71-59 7 92-79 49 90 22 23 90Zm165 323-80-80 80-80 80 80-80 80ZM569-570Z"/></svg></svg></span>
+        
+        </button>
       `;
 
       const inputElement = this.shadowRoot.querySelector(
