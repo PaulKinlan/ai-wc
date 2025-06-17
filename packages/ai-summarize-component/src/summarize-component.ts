@@ -87,17 +87,13 @@ class SummarizeComponent extends HTMLElement {
           button:disabled {
             display: none;
           }
-
-          button {
-            content: "HELLO";
-          }
-          
+        
           button#btn span.processing {
             display: none;
           }
 
           button#btn span.waiting {
-            display: inline;
+            display: flex;
           }
 
           @keyframes rotate {
@@ -110,14 +106,14 @@ class SummarizeComponent extends HTMLElement {
           }
 
           button#btn.processing span.processing {
-            display: inline;
+            display: flex;
           }
 
           button#btn.processing span.processing svg {
             animation: rotate 1s linear infinite;
           }
 
-           button#btn.processing span.waiting {
+          button#btn.processing span.waiting {
             display: none;
           }
         </style>
