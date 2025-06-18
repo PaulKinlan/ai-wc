@@ -10,16 +10,20 @@
 
 <body>
   <h1>AI Web Component Suite - Example</h1>
-  <ai-example-component></ai-example-component>
-  <ai-summarize-component></ai-summarize-component>
 
+  <p>This page demonstrates the usage of the Summarizer Web Component .</p>
   <form onsubmit="">
+    <p>The Summarizer API is bound to the textarea below. When that updates the summarizer will run.</p>
+    <code>&lt;ai-summarize-component watch="testText"&gt;&lt;/ai-summarize-component&gt;</code>
     <ai-summarize-component watch="testText"></ai-summarize-component>
     <textarea id="testText" name="text" placeholder="Enter text to summarize" rows="4" cols="50"></textarea>
   </form>
 
   <h2>Configurable AI Summarize Component</h2>
   <form onsubmit="" id="configForm">
+    <p>AI Summarize Component</p>
+    <p>The Summarizer API is bound to the textarea below. When that updates the summarizer will run. When you change any
+      of the options it should re-run again</p>
     <select id="formatSelect" name="format">
       <option value="plain-text">plain-text</option>
       <option value="markdown">Markdown</option>
