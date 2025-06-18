@@ -90,7 +90,9 @@ class SummarizeComponent extends HTMLElement {
       this.shadowRoot.innerHTML = `
         <style>
           :host {
-            
+            --padding: 8px;
+            --border-radius: 4px;
+            --border-color: #ccc;
           }
 
           div {
@@ -107,9 +109,9 @@ class SummarizeComponent extends HTMLElement {
           #input-container > * { 
             width: 100%;
             box-sizing: border-box; 
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            padding: var(--padding);
+            border: var(--border-color) 1px solid;
+            border-radius: var(--border-radius);
           }
 
           textarea {
@@ -134,8 +136,8 @@ class SummarizeComponent extends HTMLElement {
 
           span#input-container:has(textarea) ~ button {
             height: auto;
-            top: 1em;
-            right: 1em; 
+            top: var(--padding);
+            right: var(--padding); 
           }
 
           button:disabled {
