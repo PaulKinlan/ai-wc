@@ -41,6 +41,20 @@
     <ai-summarize-component watch="testingText2" id="configurableSummarize"></ai-summarize-component>
     <textarea id="testingText2" name="text" placeholder="Enter text to summarize" rows="4" cols="50"></textarea>
   </form>
+
+  <h2>Multiline AI Summarize Component</h2>
+  <form onsubmit="">
+    <ai-summarize-component multiline="true" watch="multilineTestText"></ai-summarize-component>
+    <textarea id="multilineTestText" name="text" placeholder="Enter multiline text to summarize" rows="8"
+      cols="50"></textarea>
+  </form>
+
+  <h2>AI Summarize Component with Context</h2>
+  <form onsubmit="">
+    <ai-summarize-component context="This is a test context" watch="contextTestText"></ai-summarize-component>
+    <textarea id="contextTestText" name="text" placeholder="Enter text to summarize with context" rows="4"
+      cols="50"></textarea>
+  </form>
 </body>
 
 </html>
