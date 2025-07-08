@@ -33,13 +33,18 @@
         {
           "script": "./packages/ai-example-component/:build",
           "cascade": false
+        },
+        {
+          "script": "./packages/ai-translate-paragraph/:build",
+          "cascade": false
         }
       ]
     },
     "lint": {
       "dependencies": [
         "./packages/ai-summarize-component/:lint",
-        "./packages/ai-example-component/:lint"
+        "./packages/ai-example-component/:lint",
+        "./packages/ai-translate-paragraph/:lint"
       ]
     }
   },

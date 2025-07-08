@@ -7,6 +7,9 @@ import "../packages/ai-example-component/dist/ai-example-component.es.js";
 import "../packages/ai-summarize-component/dist/summarize-component.es.js";
 import { SummarizeComponent } from "../packages/ai-summarize-component/dist/summarize-component.es.js";
 
+import "../packages/ai-translate-paragraph/dist/translate-component.es.js";
+import { TranslateComponent } from "../packages/ai-translate-paragraph/dist/translate-component.es.js";
+
 console.log(
   "Example main.ts loaded. ai-summarize-component should be available."
 );
@@ -66,6 +69,11 @@ onload = () => {
         `Updated summarize component with type: ${type}, format: ${format}, length: ${length}`
       );
     });
+
+    const translateDemo = document.getElementById(
+      "translate-1"
+    ) as TranslateComponent;
+    console.log("Translate component initialized");
   } else {
     console.error("One or more elements not found in the DOM.");
   }
