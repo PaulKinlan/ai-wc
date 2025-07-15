@@ -9,6 +9,9 @@ import { SummarizeComponent } from "../packages/ai-summarize-component/dist/summ
 
 import "../packages/ai-translate-paragraph/dist/translate-component.es.js";
 import { TranslateComponent } from "../packages/ai-translate-paragraph/dist/translate-component.es.js";
+
+import { AiImageInput } from "../packages/ai-image-input/dist/ai-image-input.es.js";
+
 import "../packages/ai-image-input/dist/ai-image-input.es.js";
 
 console.log(
@@ -16,6 +19,14 @@ console.log(
 );
 
 onload = () => {
+  const a: AiImageInput = document.querySelector(
+    "ai-image-input"
+  ) as AiImageInput;
+  if (a) {
+    console.log("ai-image-input component found:", a);
+  } else {
+    console.error("ai-image-input component not found.");
+  }
   const configForm = document.querySelector("#configForm") as HTMLFormElement;
   const configurableSummarize = document.querySelector(
     "#configurableSummarize"

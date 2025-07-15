@@ -4,6 +4,7 @@
   "main": "dist/translate-component.es.js",
   "module": "dist/translate-component.es.js",
   "types": "dist/src/translate-component.d.ts",
+  "type": "module",
   "scripts": {
     "build": "wireit"
   },

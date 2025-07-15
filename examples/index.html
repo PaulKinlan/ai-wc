@@ -71,9 +71,12 @@
     Google.</ai-translate-component>
 
   <h1>AI Image Input Component</h1>
-  <form>
+  <form id="imageInputForm"
+    onsubmit="javascript: event.preventDefault(); console.log(event.target,Object.fromEntries(new FormData(event.target)));">
     <p>This page demonstrates the usage of the Image Input Web Component.</p>
-    <ai-image-input></ai-image-input>
+    <input type="hidden" name="test" value="test">
+    <ai-image-input name="image"></ai-image-input>
+    <br>
     <input type="submit">
   </form>
 </body>
