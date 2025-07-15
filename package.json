@@ -2,6 +2,7 @@
   "name": "ai-wc",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "build": "wireit",
     "lint": "wireit",
@@ -36,6 +37,10 @@
         },
         {
           "script": "./packages/ai-translate-paragraph/:build",
+          "cascade": false
+        },
+        {
+          "script": "./packages/ai-image-input/:build",
           "cascade": false
         }
       ]

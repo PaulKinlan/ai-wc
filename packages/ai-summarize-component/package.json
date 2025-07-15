@@ -4,6 +4,7 @@
   "main": "dist/summarize-component.es.js",
   "module": "dist/summarize-component.es.js",
   "types": "dist/src/summarize-component.d.ts",
+  "type": "module",
   "scripts": {
     "build": "wireit"
   },

@@ -1,12 +1,13 @@
 {
-  "name": "@ai-wc/translate-component",
+  "name": "@ai-wc/ai-image-input",
   "version": "0.1.0",
-  "main": "dist/translate-component.es.js",
-  "module": "dist/translate-component.es.js",
-  "types": "dist/src/translate-component.d.ts",
+  "main": "dist/ai-image-input.es.js",
+  "module": "dist/ai-image-input.es.js",
+  "types": "dist/src/ai-image-input.d.ts",
   "type": "module",
   "scripts": {
-    "build": "wireit"
+    "build": "wireit",
+    "lint": "wireit"
   },
   "wireit": {
     "build": {
@@ -19,12 +20,15 @@
     "lint": {
       "command": "eslint .",
       "files": [
-        "src/**/*",
-        "vite.config.ts"
+        "src/**/*"
       ]
     }
   },
+  "dependencies": {
+    "@google/genai": "^1.9.0"
+  },
   "devDependencies": {
+    "@types/node": "^24.0.14",
     "vite": "^5.0.0",
     "wireit": "^0.14.12"
   }
