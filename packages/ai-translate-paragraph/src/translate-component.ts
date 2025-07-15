@@ -26,6 +26,10 @@ class TranslateComponent extends HTMLElement {
             display: block;
           }
         }
+
+        #translate[disabled] {
+          display: none;
+        }
       </style>
       <p><slot></slot></p>
       <a id="translate" href="#translate">Translate</a>
@@ -35,7 +39,11 @@ class TranslateComponent extends HTMLElement {
       this.#outputText = this.shadowRoot.querySelector("#output");
       this.#inputText = this.shadowRoot.querySelector("slot");
 
-      this.#sourceLanguage = this.#determineSourceLanguage();
+      this.#determineSourceLanguage().then((lang) => {
+        console.log("Source language determined:", lang);
+        this.#sourceLanguage = lang;
+      });
+
       this.#targetLanguage = this.getAttribute("target-language");
 
       if (!("Translator" in window) || !window.Translator) {
@@ -57,13 +65,18 @@ class TranslateComponent extends HTMLElement {
     });
   }
 
+  #convertLanguageCodeToBcp47(languageCode: string): string {
+    // Convert language code to BCP 47 format if necessary
+    return languageCode.toLowerCase().split("-")[0];
+  }
+
   /*
     * Determines the source language for translation.
     * If `lang` attribute is not defined on the component, then recursively checks the parent elements up to the html element.
     * If no `lang` attribute is found, use `navigator.language`
 
   */
-  #determineSourceLanguage() {
+  async #determineSourceLanguage() {
     let sourceLanguage = this.getAttribute("lang");
     if (!sourceLanguage) {
       let parent = this.parentElement;
@@ -72,35 +85,57 @@ class TranslateComponent extends HTMLElement {
         parent = parent.parentElement;
       }
       if (!sourceLanguage) {
-        sourceLanguage = navigator.language || "en"; // Default to English if no language is found
+        sourceLanguage =
+          this.#convertLanguageCodeToBcp47(navigator.language) || "en";
+
+        const elementText = this.textContent?.trim();
+
+        if (elementText && elementText.length > 0) {
+          const langDetector = await LanguageDetector.create({});
+          const languages = await langDetector.detect(elementText);
+          if (languages && languages.length > 0) {
+            sourceLanguage = languages[0].detectedLanguage || "en"; // Default to English if no language is detected
+          }
+        }
       }
     }
     return sourceLanguage;
   }
 
+  async #determineTargetLanguage() {
+    let targetLanguage =
+      this.getAttribute("target-language") ||
+      this.#convertLanguageCodeToBcp47(navigator.language) ||
+      "en";
+    return targetLanguage;
+  }
+
   async #checkAndInitialize() {
     const translateButton = this.#translateButton;
     const sourceLanguage = this.#sourceLanguage;
-    const targetLanguage = this.#targetLanguage;
+    let targetLanguage = await this.#determineTargetLanguage();
 
     if (targetLanguage == null) {
-      console.warn("No target language specified for translation.");
+      console.warn(
+        "No target language specified, unable to initialize translator."
+      );
+
       translateButton?.setAttribute("disabled", "true");
       return;
     }
 
     const translatorCapabilities = await Translator.availability({
-      sourceLanguage: this.#sourceLanguage,
-      targetLanguage: targetLanguage,
+      sourceLanguage,
+      targetLanguage,
     });
 
     console.log("Translator capabilities:", translatorCapabilities);
 
     if (translatorCapabilities == "available") {
+      translateButton?.removeAttribute("disabled");
+    } else {
       console.warn("Translation not supported for the specified languages.");
       translateButton?.setAttribute("disabled", "true");
-    } else {
-      translateButton?.removeAttribute("disabled");
     }
 
     if (
@@ -114,10 +149,18 @@ class TranslateComponent extends HTMLElement {
       return;
     }
 
+    if (translatorCapabilities == "unavailable") {
+      console.warn(
+        `Translator is unavailable for the specified languages (${sourceLanguage}, ${targetLanguage}).`
+      );
+      translateButton?.setAttribute("disabled", "true");
+      return;
+    }
+
     try {
       const translator = await Translator.create({
-        sourceLanguage: sourceLanguage,
-        targetLanguage: targetLanguage,
+        sourceLanguage,
+        targetLanguage,
       });
 
       if (!translator) {
@@ -138,6 +181,9 @@ class TranslateComponent extends HTMLElement {
 
   async #translateText() {
     let translator = this.#translator;
+    const sourceLanguage = this.#sourceLanguage;
+    const targetLanguage =
+      this.#targetLanguage || (await this.#determineTargetLanguage());
     if (!this.#targetLanguage) {
       console.warn("No target language specified for translation.");
       return;
@@ -146,8 +192,8 @@ class TranslateComponent extends HTMLElement {
     if (!translator) {
       console.warn("Translator is not initialized.");
       this.#translator = await Translator.create({
-        sourceLanguage: this.#sourceLanguage,
-        targetLanguage: this.#targetLanguage,
+        sourceLanguage,
+        targetLanguage,
       });
     }
 
