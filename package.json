@@ -37,6 +37,10 @@
         {
           "script": "./packages/ai-translate-paragraph/:build",
           "cascade": false
+        },
+        {
+          "script": "./packages/ai-image-input/:build",
+          "cascade": false
         }
       ]
     },

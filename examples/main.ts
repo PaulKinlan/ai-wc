@@ -9,6 +9,7 @@ import { SummarizeComponent } from "../packages/ai-summarize-component/dist/summ
 
 import "../packages/ai-translate-paragraph/dist/translate-component.es.js";
 import { TranslateComponent } from "../packages/ai-translate-paragraph/dist/translate-component.es.js";
+import "../packages/ai-image-input/dist/ai-image-input.es.js";
 
 console.log(
   "Example main.ts loaded. ai-summarize-component should be available."
