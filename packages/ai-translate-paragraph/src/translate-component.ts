@@ -112,14 +112,22 @@ class TranslateComponent extends HTMLElement {
 
   async #checkAndInitialize() {
     const translateButton = this.#translateButton;
-    const sourceLanguage = this.#sourceLanguage;
-    let targetLanguage = await this.#determineTargetLanguage();
+    const sourceLanguage = await this.#determineSourceLanguage();
+    const targetLanguage = await this.#determineTargetLanguage();
 
     if (targetLanguage == null) {
       console.warn(
         "No target language specified, unable to initialize translator."
       );
 
+      translateButton?.setAttribute("disabled", "true");
+      return;
+    }
+
+    if (sourceLanguage == targetLanguage) {
+      console.warn(
+        `Source language (${sourceLanguage}) and target language (${targetLanguage}) are the same. Translation will not proceed.`
+      );
       translateButton?.setAttribute("disabled", "true");
       return;
     }
@@ -133,9 +141,6 @@ class TranslateComponent extends HTMLElement {
 
     if (translatorCapabilities == "available") {
       translateButton?.removeAttribute("disabled");
-    } else {
-      console.warn("Translation not supported for the specified languages.");
-      translateButton?.setAttribute("disabled", "true");
     }
 
     if (
@@ -145,7 +150,6 @@ class TranslateComponent extends HTMLElement {
       console.warn(
         `Translator is ${translatorCapabilities}. Please ensure the necessary resources are available.`
       );
-      translateButton?.setAttribute("disabled", "true");
       return;
     }
 
@@ -181,10 +185,9 @@ class TranslateComponent extends HTMLElement {
 
   async #translateText() {
     let translator = this.#translator;
-    const sourceLanguage = this.#sourceLanguage;
-    const targetLanguage =
-      this.#targetLanguage || (await this.#determineTargetLanguage());
-    if (!this.#targetLanguage) {
+    const sourceLanguage = await this.#determineSourceLanguage();
+    const targetLanguage = await this.#determineTargetLanguage();
+    if (!targetLanguage) {
       console.warn("No target language specified for translation.");
       return;
     }
@@ -194,6 +197,11 @@ class TranslateComponent extends HTMLElement {
       this.#translator = await Translator.create({
         sourceLanguage,
         targetLanguage,
+        monitor(m) {
+          m.addEventListener("downloadprogress", (e) => {
+            console.log(`Downloaded ${e.loaded * 100}%`);
+          });
+        },
       });
     }
 

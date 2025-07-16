@@ -60,6 +60,7 @@ class AiImageInput extends HTMLElement {
 
           :host(.generate) #generate-overlay {
             display: flex;
+            cursor: pointer;
           }
 
           :host(.generate) #fileInput, :host(.generate) slot {
