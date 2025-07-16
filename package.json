@@ -55,5 +55,8 @@
   },
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "chrono-node": "^2.8.3"
+  }
 }

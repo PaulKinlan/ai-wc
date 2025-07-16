@@ -3,7 +3,7 @@ import { resolve } from "node:path"; // For path.resolve if using alias
 import { fileURLToPath } from "node:url"; // For __dirname if using alias
 import { dirname } from "node:path"; // For __dirname if using alias
 
-// const __dirname = dirname(fileURLToPath(import.meta.url)); // Uncomment if using alias
+const __dirname = dirname(fileURLToPath(import.meta.url)); // Uncomment if using alias
 
 export default defineConfig({
   build: { sourcemap: "inline" }, // Enable sourcemaps for easier debugging
@@ -24,6 +24,10 @@ export default defineConfig({
       "@ai-wc/summarize-component": resolve(
         __dirname,
         "../packages/ai-summarize-component/src/summarize-component.ts"
+      ),
+      "@ai-wc/date-input": resolve(
+        __dirname,
+        "../packages/ai-date-input/src/ai-date-input.ts"
       ),
     },
   },
