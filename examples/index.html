@@ -69,21 +69,50 @@
   <p>This page demonstrates the usage of the Translate Web Component.</p>
   <ai-translate-component target-language="ja">Hello, my name is Paul Kinlan. I am a developer advocate at
     Google.</ai-translate-component>
-  
+
   <h2>No lang or target-lang on element</h2>
   <p>This page demonstrates the usage of the Translate Web Component and Language Detection.</p>
   <ai-translate-component>こんにちは、ポール・キンランと申します。 私は Google の開発者です。</ai-translate-component>
 
   <h1>AI Image Input Component</h1>
-  <form id="imageInputForm"
-    onsubmit="javascript: event.preventDefault(); console.log(event.target,Object.fromEntries(new FormData(event.target)));">
+
+  <form id="imageInputForm" onsubmit="
+     
+    ">
     <p>This page demonstrates the usage of the Image Input Web Component.</p>
     <input type="hidden" name="test" value="test">
     <ai-image-input name="image"></ai-image-input>
     <br>
     <input type="submit">
   </form>
-  
+  <div id="image-output"></div>
+  <script>
+    const form = document.getElementById('imageInputForm');
+    form.addEventListener('submit', handleImageSubmit);
+
+    function handleImageSubmit(event) {
+      event.preventDefault();
+      const formData = new FormData(event.target);
+      const image = formData.get('image');
+      const container = document.getElementById('image-output');
+      if (container) {
+        container.innerHTML = ''; // Clear previous image
+      }
+
+      if (image && container) {
+        const img = document.createElement('img');
+        img.style.maxWidth = '400px';
+        img.style.maxHeight = '400px';
+        if (typeof image === 'string') {
+          img.src = image;
+        } else if (image instanceof File) {
+          img.src = URL.createObjectURL(image);
+        }
+        container.appendChild(img);
+      }
+    }
+  </script>
+
 </body>
 
 </html>
